@@ -57,10 +57,20 @@ app.get("/info", (request, response) => {
 
 app.post("/api/persons", (request, response) => {
   const { name, number } = request.body;
+
+  if (!name || !number) {
+    return response
+      .status(400)
+      .send({ error: "Name and Number must not be empty" });
+  }
+
+  if (persons.find((person) => person.name === name)) {
+    return response.status(400).send({ error: "Person already exists" });
+  }
+
   const person = { name, number, id: Math.trunc(Math.random() * 100000) };
   persons.push(person);
-  response.status(201);
-  response.json(person);
+  response.status(201).json(person);
 });
 
 const PORT = 3001;
