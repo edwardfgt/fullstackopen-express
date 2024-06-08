@@ -55,6 +55,14 @@ app.get("/info", (request, response) => {
   );
 });
 
+app.post("/api/persons", (request, response) => {
+  const { name, number } = request.body;
+  const person = { name, number, id: Math.trunc(Math.random() * 100000) };
+  persons.push(person);
+  response.status(201);
+  response.json(person);
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
