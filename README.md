@@ -1,1 +1,1 @@
-Backend deployed here -> https://fullstackopen-express.onrender.com/api/persons
+Full stack deployed here -> https://fullstackopen-express.onrender.com
