@@ -18,20 +18,24 @@ app.use(morgan(":method :url :body"));
 app.use(cors());
 
 app.get("/api/persons", (request, response) => {
-  Person.find({}).then((result) => {
-    response.json(result);
-  });
+  Person.find({})
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
-  Person.findById(id).then((person) => {
-    if (person) {
-      response.json(person);
-    } else {
-      response.status(404).end();
-    }
-  });
+  Person.findById(id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response) => {
@@ -41,7 +45,7 @@ app.delete("/api/persons/:id", (request, response) => {
       response.status(204).end();
     })
     .catch((error) => {
-      console.log(`Error ecountered whilst deleting: ${error}`);
+      next(error);
     });
 });
 
@@ -72,6 +76,18 @@ app.post("/api/persons", (request, response) => {
     response.json(person);
   });
 });
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
