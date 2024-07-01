@@ -58,7 +58,6 @@ app.get("/api/info", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
-  console.log(request.body);
   const { name, number } = request.body;
 
   if (!name || !number) {
@@ -75,6 +74,18 @@ app.post("/api/persons", (request, response) => {
   person.save().then((person) => {
     response.json(person);
   });
+});
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const { name, number } = request.body;
+
+  const person = { name, number };
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 const errorHandler = (error, request, response, next) => {
